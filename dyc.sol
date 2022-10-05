@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 contract OCB {
@@ -108,9 +108,9 @@ event NewStateProposal (
       _;
    }
 
-  constructor() {
+  constructor() public {
     owner = msg.sender;
-    address deadaddress = 0xD07357E595536b27f8236A0Cf77bD9cBF8758e04;
+    address deadaddress = 0x0000000000000000000000000000000000000001;
     // we need to be two to start voting !
     voters[owner] = VoterParams(true, 0);
     voters[deadaddress] = VoterParams(true, 0);
@@ -123,6 +123,11 @@ event NewStateProposal (
   }
 
   ////////////////////////
+  
+  
+  function getLastProposalId() public view returns(uint){
+  	return nbProposals;
+  }
 
   function getProposalType(uint id) public view returns(uint) {
     if (proposal[id].genre == PROPOSAL_TEMP_TYPE || proposal[id].genre == PROPOSAL_VOTERS_TYPE) {
@@ -136,8 +141,8 @@ event NewStateProposal (
     return nbVoters;
   }
 
-  function getLastVoteForUser() public view returns(uint nb){
-    return lastVoteByUser[msg.sender];
+  function getLastVoteForUser(address who) public view returns(uint){
+    return lastVoteByUser[who];
   }
 
   function getTempProposal(uint id) public view returns(StateProposal memory) {
@@ -237,7 +242,6 @@ event NewStateProposal (
 
               if(voterproposal[id].nbVotesAgree > voterproposal[id].nbVotesDisagree){
                 
-
                 if(voterproposal[id].voterProposalType == false) {//retirer une addy de la liste
                       voters[addy].auth = false;
                       nbVoters-=1;
